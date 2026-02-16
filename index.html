@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Countdown to My Leo ♌</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at top, #ffd36b, #ff8c00, #4a1c00);
+      color: #fff;
+      text-align: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      font-family: 'Pacifico', cursive;
+      font-size: 3rem;
+      margin-top: 20px;
+      color: #ffe066;
+      text-shadow: 0 0 10px #ffcc33;
+    }
+
+    .leo {
+      font-size: 4rem;
+      margin: 10px;
+      animation: glow 2s infinite alternate;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 5px gold; }
+      to { text-shadow: 0 0 25px gold; }
+    }
+
+    .countdown {
+      font-size: 2rem;
+      margin: 20px;
+      font-weight: 600;
+    }
+
+    .card {
+      background: rgba(0,0,0,0.4);
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 15px;
+      max-width: 600px;
+      box-shadow: 0 0 20px rgba(255,215,0,0.4);
+    }
+
+    .quote {
+      font-size: 1.3rem;
+      font-style: italic;
+      color: #ffeeba;
+    }
+
+    .weather {
+      font-size: 1.1rem;
+      margin-top: 10px;
+    }
+
+    .music-btn {
+      background: gold;
+      color: black;
+      padding: 10px 20px;
+      border-radius: 30px;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+      margin-top: 15px;
+      transition: 0.3s;
+    }
+
+    .music-btn:hover {
+      background: #ffcc00;
+      transform: scale(1.05);
+    }
+
+    footer {
+      margin: 25px;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Countdown To My Leo Queen 🦁</h1>
+  <div class="leo">♌</div>
+
+  <div class="countdown" id="countdown"></div>
+
+  <button class="music-btn" onclick="toggleMusic()">🎵 Play Music</button>
+
+  <div class="card">
+    <h2>💖 Love Quote</h2>
+    <div class="quote" id="quote">Loading love...</div>
+  </div>
+
+  <div class="card">
+    <h2>🌤 Weather & Cuddle Meter</h2>
+    <div class="weather" id="weather">Loading weather...</div>
+  </div>
+
+  <footer>
+    Made with ❤️ just for her
+  </footer>
+
+  <audio id="bgm" loop>
+    <source src="https://cdn.pixabay.com/audio/2022/03/09/audio_32c8bfc52b.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const birthday = new Date("August 2, 2026 00:00:00").getTime();
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const diff = birthday - now;
+
+      if (diff <= 0) {
+        document.getElementById("countdown").innerHTML = "🎉 HAPPY BIRTHDAY MY LOVE 🎉";
+        return;
+      }
+
+      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const m = Math.floor((diff / (1000 * 60)) % 60);
+      const s = Math.floor((diff / 1000) % 60);
+
+      document.getElementById("countdown").innerHTML =
+        `${d} Days ${h} Hours ${m} Minutes ${s} Seconds 💛`;
+    }
+
+    setInterval(updateCountdown, 1000);
+
+    function toggleMusic() {
+      const music = document.getElementById("bgm");
+      if (music.paused) music.play();
+      else music.pause();
+    }
+
+    async function loadQuote() {
+      try {
+        const res = await fetch("https://api.quotable.io/random?tags=love");
+        const data = await res.json();
+        document.getElementById("quote").innerText =
+          `"${data.content}" — ${data.author}`;
+      } catch {
+        document.getElementById("quote").innerText =
+          "I love you more than words can ever say ❤️";
+      }
+    }
+
+    setInterval(loadQuote, 15000);
+    loadQuote();
+
+    async function loadWeather() {
+      const apiKey = "YOUR_OPENWEATHER_API_KEY";
+      const city = "Mumbai";
+
+      try {
+        const res = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`
+        );
+        const data = await res.json();
+
+        const temp = data.main.temp;
+        let cuddle;
+
+        if (temp < 20) cuddle = "Perfect weather for cozy cuddles 🥰";
+        else if (temp < 30) cuddle = "Lovely weather for holding hands 💞";
+        else cuddle = "Too hot! Ice-cream cuddles 🍦❤️";
+
+        document.getElementById("weather").innerHTML =
+          `${data.weather[0].description}, ${temp}°C <br> ${cuddle}`;
+      } catch {
+        document.getElementById("weather").innerText =
+          "Weather unavailable — but cuddles always recommended ❤️";
+      }
+    }
+
+    loadWeather();
+  </script>
+
+</body>
+</html>
