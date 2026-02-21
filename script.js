@@ -5,7 +5,7 @@ function updateCountdown() {
     const diff = birthday - now;
 
     if (diff <= 0) {
-        document.getElementById("countdown").innerHTML = "🎉 HAPPY BIRTHDAY MY LOVE 🎉";
+        document.getElementById("countdown").innerHTML = "🎉 HAPPY BIRTHDAY MY KANNA KUTTY 🎉";
         startConfetti();
         return;
     }
@@ -95,3 +95,28 @@ async function loadWeather() {
 }
 
 loadWeather();
+
+
+function checkBirthday() {
+
+  const now = new Date().getTime();
+  const btn = document.getElementById("musicBtn");
+
+  if (now >= birthday) {
+    btn.style.display = "inline-block"; // show button
+  }
+}
+
+function toggleMusic() {
+  const music = document.getElementById("bgm");
+
+  if (music.paused) {
+    music.play();
+    document.getElementById("musicBtn").innerText = "⏸ Pause Music";
+  } else {
+    music.pause();
+    document.getElementById("musicBtn").innerText = "🎵 Play Music";
+  }
+}
+
+checkBirthday();
