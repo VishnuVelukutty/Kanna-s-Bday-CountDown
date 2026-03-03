@@ -48,38 +48,48 @@ function toggleMusic() {
 }
 
 async function loadQuote() {
+    const today = new Date().toDateString();
+    const savedDate = localStorage.getItem("quoteDate");
+    const savedQuote = localStorage.getItem("dailyQuote");
+
+    // If quote already saved today, use it
+    if (savedDate === today && savedQuote) {
+        document.getElementById("quote").innerText = savedQuote;
+        return;
+    }
+
     try {
         const res = await fetch(
-            "https://api.api-ninjas.com/v2/quotes?category=love",
-            {
-                headers: {
-                    "X-Api-Key": "bYnQmTYqWcI5Z71noTsCyAZm03T6giOsrZLBibem"
-                }
-            }
+            "https://api.quotable.io/random"
         );
         const data = await res.json();
 
-        document.getElementById("quote").innerText =
-            `"${data[0].quote}" — ${data[0].author || "Unknown"} ❤️`;
+        const quoteText = `"${data.content}" — ${data.author || "Unknown"} ❤️`;
+
+        document.getElementById("quote").innerText = quoteText;
+
+        // Save today's quote
+        localStorage.setItem("dailyQuote", quoteText);
+        localStorage.setItem("quoteDate", today);
+
     } catch {
-        document.getElementById("quote").innerText =
-            "I love you more than words can ever say ❤️";
+        const fallback = "I love you more than words can ever say ❤️";
+        document.getElementById("quote").innerText = fallback;
     }
 }
 
 loadQuote();
 
 async function loadWeather() {
-    const apiKey = "54ef89471b96009721018a7142484c9a";
-    const city = "Borivali, IN";
-
     try {
         const res = await fetch(
-            `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`
+            "https://api.open-meteo.com/v1/forecast?latitude=19.0728&longitude=72.8826&current_weather=true"
         );
-        const data = await res.json();
 
-        const temp = data.main.temp;
+
+        const data = await res.json();
+        const temp = data.current_weather.temperature;
+
         let cuddle;
 
         if (temp < 20) cuddle = "Perfect weather for cozy cuddles 🥰";
@@ -87,10 +97,11 @@ async function loadWeather() {
         else cuddle = "Too hot! Ice-cream cuddles 🍦❤️";
 
         document.getElementById("weather").innerHTML =
-            `${(data.weather[0].description).toUpperCase()}, ${temp}°C <br> ${cuddle}`;
+            `Temperature: ${temp}°C <br> ${cuddle}`;
+
     } catch {
         document.getElementById("weather").innerText =
-            "Weather unavailable — but cuddles always recommended ❤️";
+            "What Weather ??? — Let us cuddle ❤️";
     }
 }
 
@@ -99,24 +110,24 @@ loadWeather();
 
 function checkBirthday() {
 
-  const now = new Date().getTime();
-  const btn = document.getElementById("musicBtn");
+    const now = new Date().getTime();
+    const btn = document.getElementById("musicBtn");
 
-  if (now >= birthday) {
-    btn.style.display = "inline-block"; // show button
-  }
+    if (now >= birthday) {
+        btn.style.display = "inline-block"; // show button
+    }
 }
 
 function toggleMusic() {
-  const music = document.getElementById("bgm");
+    const music = document.getElementById("bgm");
 
-  if (music.paused) {
-    music.play();
-    document.getElementById("musicBtn").innerText = "⏸ Pause Music";
-  } else {
-    music.pause();
-    document.getElementById("musicBtn").innerText = "🎵 Play Music";
-  }
+    if (music.paused) {
+        music.play();
+        document.getElementById("musicBtn").innerText = "⏸ Pause Music";
+    } else {
+        music.pause();
+        document.getElementById("musicBtn").innerText = "🎵 Play Music";
+    }
 }
 
 checkBirthday();
