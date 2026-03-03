@@ -48,33 +48,23 @@ function toggleMusic() {
 }
 
 async function loadQuote() {
-    const today = new Date().toDateString();
-    const savedDate = localStorage.getItem("quoteDate");
-    const savedQuote = localStorage.getItem("dailyQuote");
-
-    // If quote already saved today, use it
-    if (savedDate === today && savedQuote) {
-        document.getElementById("quote").innerText = savedQuote;
-        return;
-    }
-
     try {
-        const res = await fetch(
-            "https://api.quotable.io/random"
+        const res = await fetch("quotes.json", { cache: "no-store" });
+        const quotes = await res.json();
+
+        const today = new Date();
+        const dayOfYear = Math.floor(
+            (today - new Date(today.getFullYear(), 0, 0)) / 86400000
         );
-        const data = await res.json();
 
-        const quoteText = `"${data.content}" — ${data.author || "Unknown"} ❤️`;
+        const quote = quotes[dayOfYear % quotes.length];
 
-        document.getElementById("quote").innerText = quoteText;
-
-        // Save today's quote
-        localStorage.setItem("dailyQuote", quoteText);
-        localStorage.setItem("quoteDate", today);
+        document.getElementById("quote").innerHTML =
+            `"${quote.text}"<br><span class="author">— ${quote.author}</span>`;
 
     } catch {
-        const fallback = "I love you more than words can ever say ❤️";
-        document.getElementById("quote").innerText = fallback;
+        document.getElementById("quote").innerText =
+            "I love you more than words can ever say ❤️";
     }
 }
 
